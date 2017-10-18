@@ -9,7 +9,7 @@
 
 
 
-UCLASS( ClassGroup=(Custom), meta=(BluePrintSpawnableComponent), hidecategories = ("Collision") )
+UCLASS( ClassGroup=(Custom), meta=(BluePrintSpawnableComponent)) //, hidecategories = ("Collision") )
 class PROJ_TANK_API UTankBarrelStaticMeshComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()

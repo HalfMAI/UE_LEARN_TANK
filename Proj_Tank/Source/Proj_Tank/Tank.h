@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 
 #include "TankAimingComponent.h"
-
+#include "TankProjectile.h"
 #include "Tank.generated.h"
 
 UCLASS()
@@ -45,5 +45,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float LaunchSpeed = 100000.0f;
-	
+	UPROPERTY(EditAnywhere, Category = Setup)
+	TSubclassOf<ATankProjectile> TankProjectileBlueprint;
 };
