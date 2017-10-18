@@ -37,6 +37,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::SetBarrelReference(UTankBarrelStaticMeshComponent * Ballel)
 {
 	this->TankAimingCom->SetBarrelReference(Ballel);
+	this->BallelMeshRef = Ballel;
 }
 
 void ATank::SetTurrentRefrence(UTankTurrentStaticMeshComponent * Turrent)
@@ -47,6 +48,17 @@ void ATank::SetTurrentRefrence(UTankTurrentStaticMeshComponent * Turrent)
 void ATank::Fire() const
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fire~"));
+
+	FName tmpSocketName = FName("ProjectileSpawnLocation");
+	FVector tmpLoc = this->BallelMeshRef->GetSocketLocation(tmpSocketName);
+	FRotator tmpRot = this->BallelMeshRef->GetSocketRotation(tmpSocketName);
+
+
+	UE_LOG(LogTemp, Warning, TEXT("FireAt: %s, %s"), *tmpLoc.ToString(), *tmpRot.ToString());
+
+	ATankProjectile* tmpProjectile = GetWorld()->SpawnActor<ATankProjectile>(this->TankProjectileBlueprint, tmpLoc, tmpRot);
+
+	//tmpProjectile
 }
 
 void ATank::AimAt(FVector HitLocation) const

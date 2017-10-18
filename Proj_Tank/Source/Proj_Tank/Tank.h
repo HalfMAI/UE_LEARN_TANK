@@ -47,4 +47,7 @@ public:
 	float LaunchSpeed = 100000.0f;
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<ATankProjectile> TankProjectileBlueprint;
+
+private:
+	UTankBarrelStaticMeshComponent* BallelMeshRef;
 };
