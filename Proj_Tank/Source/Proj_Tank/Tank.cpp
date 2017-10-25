@@ -10,7 +10,7 @@ ATank::ATank()
 	PrimaryActorTick.bCanEverTick = false;
 
 	this->TankAimingCom = CreateDefaultSubobject<UTankAimingComponent>(FName("Aiming Component"));
-	this->AttachToComponent(this->RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	//this->TankMovementCom = CreateDefaultSubobject<UTankMovementComponent>(FName("Movement Component"));
 }
 
 // Called when the game starts or when spawned
@@ -45,20 +45,21 @@ void ATank::SetTurrentRefrence(UTankTurrentStaticMeshComponent * Turrent)
 	this->TankAimingCom->SetTurrentReference(Turrent);
 }
 
-void ATank::Fire() const
+void ATank::Fire()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fire~"));
+	bool tmpIsReloaded = (FPlatformTime::Seconds() - this->ReloadLastUpdateTime > this->ReloadTime);
 
-	FName tmpSocketName = FName("ProjectileSpawnLocation");
-	FVector tmpLoc = this->BallelMeshRef->GetSocketLocation(tmpSocketName);
-	FRotator tmpRot = this->BallelMeshRef->GetSocketRotation(tmpSocketName);
+	if (this->BallelMeshRef && tmpIsReloaded)
+	{
+		FName tmpSocketName = FName("ProjectileSpawnLocation");
+		FVector tmpLoc = this->BallelMeshRef->GetSocketLocation(tmpSocketName);
+		FRotator tmpRot = this->BallelMeshRef->GetSocketRotation(tmpSocketName);
 
+		ATankProjectile* tmpProjectile = GetWorld()->SpawnActor<ATankProjectile>(this->TankProjectileBlueprint, tmpLoc, tmpRot);
+		tmpProjectile->LaunchProjectile(this->LaunchSpeed);
 
-	UE_LOG(LogTemp, Warning, TEXT("FireAt: %s, %s"), *tmpLoc.ToString(), *tmpRot.ToString());
-
-	ATankProjectile* tmpProjectile = GetWorld()->SpawnActor<ATankProjectile>(this->TankProjectileBlueprint, tmpLoc, tmpRot);
-
-	//tmpProjectile
+		this->ReloadLastUpdateTime = FPlatformTime::Seconds();
+	}
 }
 
 void ATank::AimAt(FVector HitLocation) const

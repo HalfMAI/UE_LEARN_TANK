@@ -4,6 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
+#include "GameFramework/ProjectileMovementComponent.h"
+
+
 #include "TankProjectile.generated.h"
 
 UCLASS()
@@ -23,6 +27,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void LaunchProjectile(float LaunchSpeed) const;
 	
-	
+private:
+	UProjectileMovementComponent* TankProjectileMC = nullptr;
 };

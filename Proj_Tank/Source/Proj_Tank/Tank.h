@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-
+#include "TankMovementComponent.h"
 #include "TankAimingComponent.h"
 #include "TankProjectile.h"
 #include "Tank.generated.h"
@@ -19,6 +19,8 @@ public:
 
 protected:
 	UTankAimingComponent* TankAimingCom;
+	UPROPERTY(BlueprintReadOnly)
+	UTankMovementComponent* TankMovementCom;
 
 private:
 	// Sets default values for this pawn's properties
@@ -41,13 +43,19 @@ public:
 	void SetTurrentRefrence(UTankTurrentStaticMeshComponent* Turrent);
 
 	UFUNCTION(BlueprintCallable, Category = Battle)
-	void Fire() const;
+	void Fire();
 
 	UPROPERTY(EditAnywhere, Category = Firing)
 	float LaunchSpeed = 100000.0f;
 	UPROPERTY(EditAnywhere, Category = Setup)
 	TSubclassOf<ATankProjectile> TankProjectileBlueprint;
 
-private:
+protected:
 	UTankBarrelStaticMeshComponent* BallelMeshRef;
+
+	UPROPERTY(EditDefaultsOnly, Category = Firing)
+	float ReloadTime = 3.0f;
+
+private:
+	double ReloadLastUpdateTime = 0.0f;
 };

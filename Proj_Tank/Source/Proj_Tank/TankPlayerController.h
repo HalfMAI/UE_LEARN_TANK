@@ -20,7 +20,7 @@ class PROJ_TANK_API ATankPlayerController : public APlayerController
 	UPROPERTY(EditAnywhere)
 	float CrossHairLocX = 0.5f;
 	UPROPERTY(EditAnywhere)
-	float CrossHairLocY = 0.333f;
+	float CrossHairLocY = 0.4f;
 	UPROPERTY(EditAnywhere)
 	float LineTraceRange = 1000000.0f;
 
