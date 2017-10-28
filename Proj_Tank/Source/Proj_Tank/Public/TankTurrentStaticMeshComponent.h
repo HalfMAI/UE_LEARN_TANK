@@ -20,6 +20,6 @@ public:
 	void TurnTurrent(int TurnDir); // 1:right, -1:left
 
 
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	float TurnSpeed = 30.0f;
 };

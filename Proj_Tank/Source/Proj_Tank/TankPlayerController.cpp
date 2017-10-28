@@ -2,25 +2,15 @@
 
 #include "TankPlayerController.h"
 
-
-
-ATank* ATankPlayerController::GetControlledTank() const
-{
-	return Cast<ATank>(GetPawn());
-}
-
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	auto ControlledTank = this->GetControlledTank();
-	if (ControlledTank)
+	this->TankAimingCom = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+
+	if (ensure(this->TankAimingCom))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController ControlledTank: %s"), *(ControlledTank->GetName()));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PlayerController Do not have Controlled Tank!"));
+		this->OnFoundAimingComponent(TankAimingCom);
 	}
 }
 
@@ -32,7 +22,7 @@ void ATankPlayerController::Tick(float DeltaTime)
 
 void ATankPlayerController::AimTowardsCosshair()
 {
-	if (this->GetControlledTank())
+	if (GetPawn())
 	{
 		/*int32 tmpViewportSizeX, tmpViewportSizeY;
 		GetViewportSize(tmpViewportSizeX, tmpViewportSizeY);
@@ -47,7 +37,7 @@ void ATankPlayerController::AimTowardsCosshair()
 		FVector tmpHitLocation;		
 		if (this->GetSightRayHitLoaction(tmpHitLocation))
 		{
-			this->GetControlledTank()->AimAt(tmpHitLocation);
+			this->TankAimingCom->AimAt(tmpHitLocation, this->TankAimingCom->LaunchSpeed); //TODO get launch speed
 		}
 	}
 }

@@ -8,11 +8,21 @@
 #include "GameFramework/Actor.h"
 #include "TankBarrelStaticMeshComponent.h"
 #include "TankTurrentStaticMeshComponent.h"
-
+#include "TankProjectile.h"
 
 
 #include "Kismet/GameplayStatics.h"
 #include "TankAimingComponent.generated.h"
+
+
+
+UENUM()
+enum class EFiringStatus : uint8
+{
+	Locked,
+	Aiming,
+	Reloading
+};
 
 
 
@@ -29,20 +39,49 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	
+	UFUNCTION(BlueprintCallable, Category = "Setup")
+	void InitTankAimingComponent(UTankBarrelStaticMeshComponent * Ballel, UTankTurrentStaticMeshComponent * Turrent);
+
 	void AimAt(FVector& HitLocation, float LaunchSpeed);
-	void SetBarrelReference(UTankBarrelStaticMeshComponent* Ballel);
-	void SetTurrentReference(UTankTurrentStaticMeshComponent* Turrent);
 	void MoveBarrelTowards(FVector AimDirection);
 
-	
+	UTankBarrelStaticMeshComponent* GetBarrelReference() const;
+
+
+	UFUNCTION(BlueprintCallable, Category = "Battle")
+	void Fire();
 private:
 	UTankBarrelStaticMeshComponent *Barrel = nullptr;
 	UTankTurrentStaticMeshComponent *Turrent = nullptr;
 
 	bool IsComponentSetupOK() const;
+
+	bool IsBallelMoving() const;
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = "Status")
+	EFiringStatus CurFiringStatus = EFiringStatus::Reloading;
+	
+
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Firing")
+	float LaunchSpeed = 5000.0f;
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	TSubclassOf<ATankProjectile> TankProjectileBlueprint;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float ReloadTime = 3.0f;
+
+private:
+	double ReloadLastUpdateTime = 0.0f;
+
+	FVector AimingDirection = FVector::ZeroVector;
 };

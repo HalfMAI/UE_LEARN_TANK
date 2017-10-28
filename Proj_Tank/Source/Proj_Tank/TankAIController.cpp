@@ -6,7 +6,8 @@ void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	this->TankAimingCom = GetPawn()->FindComponentByClass<UTankAimingComponent>();
+	ensure(this->TankAimingCom);
 }
 
 void ATankAIController::Tick(float DeltaTime)
@@ -14,18 +15,17 @@ void ATankAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	ATankPlayerController *tmpTankPC = Cast<ATankPlayerController>(GetWorld()->GetFirstPlayerController());
-	if (tmpTankPC)
+	auto tmpPlayerTank = tmpTankPC->GetPawn();
+	if (tmpTankPC && tmpPlayerTank)
 	{
-		ATank* tmpPlayerTank = tmpTankPC->GetControlledTank();
-		if (tmpPlayerTank)
+		if (this->TankAimingCom)
 		{
-			ATank* tmpCurrentTank = Cast<ATank>(GetPawn());
-			tmpCurrentTank->AimAt(tmpPlayerTank->GetActorLocation());
-
-			//tmpCurrentTank->Fire();
-
-
-			this->MoveToActor(tmpPlayerTank, this->AcceptRadius);
+			FVector tmpLoc = tmpPlayerTank->GetActorLocation();
+			this->TankAimingCom->AimAt(tmpLoc, this->TankAimingCom->LaunchSpeed);
+			this->TankAimingCom->Fire();
 		}
+
+
+		this->MoveToActor(tmpPlayerTank, this->AcceptRadius);
 	}
 }

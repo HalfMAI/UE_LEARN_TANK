@@ -18,10 +18,10 @@ public:
 
 	void Elevation(int ElevationDir); // 1:up, -1:down
 		
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	float ElevatSpeed = 30.0f;
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	float MaxElevationDegree = 45;
-	UPROPERTY(EditAnywhere, Category = Setup)
+	UPROPERTY(EditAnywhere, Category = "Setup")
 	float MinElevationDegree = 0;
 };

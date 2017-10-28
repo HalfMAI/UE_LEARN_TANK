@@ -20,13 +20,13 @@ class PROJ_TANK_API UTankMovementComponent : public UNavMovementComponent
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UFUNCTION(BlueprintCallable, Category = "Setup")
 	void InitTankMovementComponent(UTankTrack* LeftTrack, UTankTrack* RightTrack);
 
 
-	UFUNCTION(BlueprintCallable, Category = Input)
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void IntendMoveForward(float Dir);
-	UFUNCTION(BlueprintCallable, Category = Input)
+	UFUNCTION(BlueprintCallable, Category = "Input")
 	void IntendTrunRight(float Dir);
 
 	void RequestDirectMove(const FVector& MoveVelocity, bool bForceMaxSpeed) override;

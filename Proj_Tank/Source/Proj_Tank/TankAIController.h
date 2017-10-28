@@ -23,4 +23,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float AcceptRadius = 300;
+
+	UPROPERTY(BlueprintReadOnly)
+	UTankAimingComponent* TankAimingCom;
 };

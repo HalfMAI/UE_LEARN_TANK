@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
-#include "Tank.h"
+#include "TankAimingComponent.h"
 
 #include "TankPlayerController.generated.h"
 
@@ -25,12 +25,19 @@ class PROJ_TANK_API ATankPlayerController : public APlayerController
 	float LineTraceRange = 1000000.0f;
 
 public:
-	ATank* GetControlledTank() const;
+	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
+	void OnFoundAimingComponent(UTankAimingComponent* TankAimingComponent);
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void AimTowardsCosshair();
+
+private:
 	bool GetSightRayHitLoaction(OUT FVector& out_HitLocation) const;
 	bool GetLookVectorHitLocation(FVector& LookLocation, FVector& LookDirection, OUT FVector& out_HitLocation) const;
 	bool GetCossHairLookLocationAndDirection(OUT FVector& tmpCamWorldLocation, OUT FVector& tmpCamWorldDirection) const;
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	UTankAimingComponent* TankAimingCom;
 };
