@@ -39,6 +39,10 @@ void UTankAimingComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	{
 		this->CurFiringStatus = EFiringStatus::Reloading;
 	}
+	else if (this->CurrentAmmoNum == 0)
+	{
+		this->CurFiringStatus = EFiringStatus::NoAmmo;
+	}
 	else 
 	{
 		this->CurFiringStatus = EFiringStatus::Locked;
@@ -56,7 +60,7 @@ void UTankAimingComponent::Fire()
 {
 	bool tmpIsReloaded = (FPlatformTime::Seconds() - this->ReloadLastUpdateTime > this->ReloadTime);
 
-	if (tmpIsReloaded)
+	if (tmpIsReloaded && this->CurrentAmmoNum > 0)
 	{
 		FName tmpSocketName = FName("ProjectileSpawnLocation");
 		FVector tmpLoc = this->Barrel->GetSocketLocation(tmpSocketName);
@@ -66,6 +70,8 @@ void UTankAimingComponent::Fire()
 		tmpProjectile->LaunchProjectile(this->LaunchSpeed);
 
 		this->ReloadLastUpdateTime = FPlatformTime::Seconds();
+
+		this->CurrentAmmoNum--;
 	}
 }
 
@@ -111,6 +117,16 @@ UTankBarrelStaticMeshComponent* UTankAimingComponent::GetBarrelReference() const
 	return this->Barrel;
 }
 
+EFiringStatus UTankAimingComponent::GetFinringStatus() const
+{
+	return this->CurFiringStatus;
+}
+
+int UTankAimingComponent::GetAmmoNum() const
+{
+	return this->CurrentAmmoNum;
+}
+
 void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 {
 	if (!this->IsComponentSetupOK())
@@ -122,10 +138,9 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	FRotator tmpTurrentRotator = this->Turrent->GetForwardVector().Rotation();
 
 	int tmpPitchDir = (AimDirection.Rotation().Pitch > tmpCurBarrelRotator.Pitch) ? 1 : -1;
-	int tmpYawDir = (AimDirection.Rotation().Yaw > tmpTurrentRotator.Yaw) ? 1 : -1;
 
-	UE_LOG(LogTemp, Warning, TEXT("bbb: %s"), *AimDirection.Rotation().ToString());
-	UE_LOG(LogTemp, Warning, TEXT("aaa: %s"), *tmpTurrentRotator.ToString());
+	int tmpDeltaYaw = AimDirection.Rotation().Yaw - tmpTurrentRotator.Yaw;
+	int tmpYawDir = FMath::Abs(tmpDeltaYaw) < 180 ? FMath::Clamp(tmpDeltaYaw, -1, 1) : FMath::Clamp(-tmpDeltaYaw, -1, 1);
 
 	this->Barrel->Elevation(tmpPitchDir);
 	this->Turrent->TurnTurrent(tmpYawDir);

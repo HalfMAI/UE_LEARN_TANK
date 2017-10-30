@@ -8,6 +8,9 @@ void ATankAIController::BeginPlay()
 
 	this->TankAimingCom = GetPawn()->FindComponentByClass<UTankAimingComponent>();
 	ensure(this->TankAimingCom);
+
+	uint8 tmpN = FMath::RandRange(0, static_cast<int>(EAITankMoveType::EEND) - 1);
+	this->CurrentMoveType = static_cast<EAITankMoveType>(tmpN);
 }
 
 void ATankAIController::Tick(float DeltaTime)
@@ -22,10 +25,30 @@ void ATankAIController::Tick(float DeltaTime)
 		{
 			FVector tmpLoc = tmpPlayerTank->GetActorLocation();
 			this->TankAimingCom->AimAt(tmpLoc, this->TankAimingCom->LaunchSpeed);
-			this->TankAimingCom->Fire();
+
+			if (this->TankAimingCom->GetFinringStatus() == EFiringStatus::Locked && this->IsCanFire)
+			{
+				this->TankAimingCom->Fire();
+			}
 		}
 
-
-		this->MoveToActor(tmpPlayerTank, this->AcceptRadius);
+		FVector tmpTankLoc = tmpPlayerTank->GetNavAgentLocation();
+		switch (this->CurrentMoveType)
+		{
+		case EAITankMoveType::Follow :
+			this->MoveToActor(tmpPlayerTank, this->AcceptRadius);
+			break;
+		case EAITankMoveType::Block :
+			this->MoveToLocation(tmpTankLoc + tmpPlayerTank->GetActorForwardVector() * this->MoveTypeDistance, this->AcceptRadius);
+			break;
+		case EAITankMoveType::Right:
+			this->MoveToLocation(tmpTankLoc + tmpPlayerTank->GetActorRightVector() * this->MoveTypeDistance, this->AcceptRadius);
+			break;
+		case EAITankMoveType::Left:
+			this->MoveToLocation(tmpTankLoc + tmpPlayerTank->GetActorRightVector() * -this->MoveTypeDistance, this->AcceptRadius);
+			break;
+		default:
+			break;
+		}
 	}
 }

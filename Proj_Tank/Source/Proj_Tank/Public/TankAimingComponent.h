@@ -21,7 +21,9 @@ enum class EFiringStatus : uint8
 {
 	Locked,
 	Aiming,
-	Reloading
+	Reloading,
+	NoAmmo,
+	EEND
 };
 
 
@@ -52,6 +54,11 @@ public:
 
 	UTankBarrelStaticMeshComponent* GetBarrelReference() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Custom")
+	EFiringStatus GetFinringStatus() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Custom")
+	int GetAmmoNum() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Battle")
 	void Fire();
@@ -79,6 +86,9 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float ReloadTime = 3.0f;
+
+	UPROPERTY(EditAnywhere)
+	int CurrentAmmoNum = 3;
 
 private:
 	double ReloadLastUpdateTime = 0.0f;

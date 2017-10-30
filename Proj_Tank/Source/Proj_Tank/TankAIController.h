@@ -9,6 +9,18 @@
 
 #include "TankAIController.generated.h"
 
+
+UENUM()
+enum class EAITankMoveType : uint8
+{
+	Follow,
+	Block,
+	Right,
+	Left,
+	EEND
+};
+
+
 /**
  * 
  */
@@ -21,8 +33,18 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-	float AcceptRadius = 300;
+protected:
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float AcceptRadius = 5000;
+	
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	float MoveTypeDistance = 8000;
+
+	UPROPERTY(EditAnywhere, Category = "Setup")
+	bool IsCanFire = true;
+
+	UPROPERTY(EditAnywhere, Category = "MoveType")
+	EAITankMoveType CurrentMoveType = EAITankMoveType::Follow;
 
 	UPROPERTY(BlueprintReadOnly)
 	UTankAimingComponent* TankAimingCom;
