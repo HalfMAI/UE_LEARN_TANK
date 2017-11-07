@@ -30,12 +30,9 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void AimTowardsCosshair();
 
-private:
-	bool GetSightRayHitLoaction(OUT FVector& out_HitLocation) const;
-	bool GetLookVectorHitLocation(FVector& LookLocation, FVector& LookDirection, OUT FVector& out_HitLocation) const;
-	bool GetCossHairLookLocationAndDirection(OUT FVector& tmpCamWorldLocation, OUT FVector& tmpCamWorldDirection) const;
+	UFUNCTION(BlueprintCallable, Category = "Custom")
+	void AimTowardsCosshair();
 
 public:
 	UPROPERTY(BlueprintReadOnly)

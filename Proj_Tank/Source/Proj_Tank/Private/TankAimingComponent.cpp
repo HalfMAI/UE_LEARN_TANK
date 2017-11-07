@@ -67,6 +67,8 @@ void UTankAimingComponent::Fire()
 		FRotator tmpRot = this->Barrel->GetSocketRotation(tmpSocketName);
 
 		ATankProjectile* tmpProjectile = GetWorld()->SpawnActor<ATankProjectile>(this->TankProjectileBlueprint, tmpLoc, tmpRot);
+		tmpProjectile->Instigator = (APawn*)this->GetOwner();
+		tmpProjectile->GetCollisionCom()->IgnoreActorWhenMoving(GetOwner(), true);
 		tmpProjectile->LaunchProjectile(this->LaunchSpeed);
 
 		this->ReloadLastUpdateTime = FPlatformTime::Seconds();
@@ -79,8 +81,8 @@ void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
 {
 	if (!this->IsComponentSetupOK())	{ return; }
 
-
-	FVector tmpStartLoc = this->Barrel->GetSocketLocation(FName("LaunchPoint"));
+	//LaunchPoint
+	FVector tmpStartLoc = this->Barrel->GetSocketLocation(FName("ProjectileSpawnLocation"));
 	FVector tmpEndLoc = HitLocation;
 
 	FVector resultVelocity;
@@ -93,7 +95,7 @@ void UTankAimingComponent::AimAt(FVector& HitLocation, float LaunchSpeed)
 		false,
 		0.0f,
 		0.0f,
-		ESuggestProjVelocityTraceOption::OnlyTraceWhileAscending,
+		ESuggestProjVelocityTraceOption::DoNotTrace,
 		FCollisionResponseParams::DefaultResponseParam,
 		TArray<AActor*>({ this->GetOwner() }),
 		false
@@ -137,13 +139,23 @@ void UTankAimingComponent::MoveBarrelTowards(FVector AimDirection)
 	FRotator tmpCurBarrelRotator = this->Barrel->GetForwardVector().Rotation();
 	FRotator tmpTurrentRotator = this->Turrent->GetForwardVector().Rotation();
 
-	int tmpPitchDir = (AimDirection.Rotation().Pitch > tmpCurBarrelRotator.Pitch) ? 1 : -1;
+	FRotator tmpDeltaRotator = AimDirection.Rotation() - this->Barrel->GetForwardVector().Rotation();
 
-	int tmpDeltaYaw = AimDirection.Rotation().Yaw - tmpTurrentRotator.Yaw;
-	int tmpYawDir = FMath::Abs(tmpDeltaYaw) < 180 ? FMath::Clamp(tmpDeltaYaw, -1, 1) : FMath::Clamp(-tmpDeltaYaw, -1, 1);
 
-	this->Barrel->Elevation(tmpPitchDir);
-	this->Turrent->TurnTurrent(tmpYawDir);
+	if (FMath::Abs(tmpDeltaRotator.Pitch) > 1 )
+	{
+		int32 tmpPitchDir = tmpDeltaRotator.Pitch > 0 ? 1 : -1;
+		this->Barrel->Elevation(tmpPitchDir);
+		UE_LOG(LogTemp, Warning, TEXT("tmpDeltaRotator: %s, tmpPitchDir:%i"), *tmpDeltaRotator.ToString(), tmpPitchDir);
+	}
+
+	if (FMath::Abs(tmpDeltaRotator.Yaw) > 0.25)
+	{
+		float tmpYaw = FMath::Abs(tmpDeltaRotator.Yaw) < 180 ? tmpDeltaRotator.Yaw : -tmpDeltaRotator.Yaw;
+		int32 tmpYawDir = FMath::Clamp(tmpYaw, -1.0f, 1.0f);
+		this->Turrent->TurnTurrent(tmpYawDir);
+	}
+
 }
 
 bool UTankAimingComponent::IsComponentSetupOK() const
