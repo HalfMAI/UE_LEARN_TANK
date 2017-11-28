@@ -30,10 +30,15 @@ class PROJ_TANK_API ATankAIController : public AAIController
 	GENERATED_BODY()
 
 public:
+	virtual void SetPawn(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 protected:
+
+	UFUNCTION()
+	void OnPossedTankDeath();
+
 	UPROPERTY(EditAnywhere, Category = "Setup")
 	float AcceptRadius = 5000;
 	

@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
 #include "TankAimingComponent.h"
-
+#include "Tank.h"
 #include "TankPlayerController.generated.h"
 
 /**
@@ -25,6 +25,11 @@ class PROJ_TANK_API ATankPlayerController : public APlayerController
 	float LineTraceRange = 1000000.0f;
 
 public:
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnPossedTankDeath();
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Setup")
 	void OnFoundAimingComponent(UTankAimingComponent* TankAimingComponent);
 	

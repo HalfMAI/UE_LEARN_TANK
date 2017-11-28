@@ -2,6 +2,25 @@
 
 #include "TankPlayerController.h"
 
+
+
+void ATankPlayerController::SetPawn(APawn * InPawn)
+{
+	Super::SetPawn(InPawn);
+
+	auto tmpPosedTank = Cast<ATank>(GetPawn());
+
+	if (tmpPosedTank)
+	{
+		tmpPosedTank->OnTankDeath.AddUniqueDynamic(this, &ATankPlayerController::OnPossedTankDeath);
+	}
+}
+
+void ATankPlayerController::OnPossedTankDeath()
+{
+	StartSpectatingOnly();
+}
+
 void ATankPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

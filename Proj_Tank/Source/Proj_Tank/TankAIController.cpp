@@ -2,6 +2,29 @@
 
 #include "TankAIController.h"
 
+
+void ATankAIController::SetPawn(APawn* InPawn)
+{
+	Super::SetPawn(InPawn);
+
+
+	auto tmpPosedTank = Cast<ATank>(GetPawn());
+
+	if (tmpPosedTank)
+	{
+		tmpPosedTank->OnTankDeath.AddUniqueDynamic(this, &ATankAIController::OnPossedTankDeath);
+	}
+}
+
+
+void ATankAIController::OnPossedTankDeath()
+{
+	if (ensure(GetPawn()))
+	{
+		GetPawn()->DetachFromControllerPendingDestroy();
+	}
+}
+
 void ATankAIController::BeginPlay()
 {
 	Super::BeginPlay();
